@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener - Modern & Simple</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="{{ url_for('static', path='/css/style.css') }}" rel="stylesheet">
+</head>
+<body class="d-flex align-items-center py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <!-- Main Card -->
+                <div class="url-card p-4 mb-4">
+                    <h1 class="text-center mb-4">
+                        <i class="fas fa-link text-primary"></i>
+                        URL Shortener
+                    </h1>
+                    <form id="urlForm" class="mb-4">
+                        <div class="input-group mb-3">
+                            <input 
+                                type="url" 
+                                class="form-control form-control-lg border-0" 
+                                id="urlInput"
+                                placeholder="Paste your long URL here"
+                                required
+                            >
+                            <button class="btn btn-primary px-4" type="submit">
+                                <i class="fas fa-compress-alt me-2"></i>
+                                Shorten
+                            </button>
+                        </div>
+                        <div class="invalid-feedback" id="urlError">
+                            Please enter a valid URL
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Result Card -->
+                <div id="resultCard" class="url-card result-card p-4">
+                    <h5 class="text-center mb-3">Your Shortened URL</h5>
+                    <div class="input-group mb-3">
+                        <input 
+                            type="text" 
+                            class="form-control form-control-lg"
+                            id="shortUrl" 
+                            readonly
+                        >
+                        <button 
+                            class="btn btn-light copy-btn" 
+                            type="button" 
+                            id="copyButton"
+                        >
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                    <p class="text-center mb-0 small">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Click the button to copy the URL
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', path='/js/shortener.js') }}"></script>
+</body>
+</html>
