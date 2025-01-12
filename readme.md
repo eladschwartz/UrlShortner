@@ -7,6 +7,7 @@ A modern, fast, and simple URL shortener built with FastAPI and SQLAlchemy.
 - ✨ Modern and responsive UI
 - 🚀 Fast asynchronous backend with FastAPI
 - 🔒 URL validation and sanitization
+- 🔑 Password protection for URLs
 - 📝 Custom URL aliases support
 - 🕒 Optional URL expiration
 - 📊 Click tracking
@@ -22,6 +23,7 @@ A modern, fast, and simple URL shortener built with FastAPI and SQLAlchemy.
   - PostgreSQL (Database)
   - Alembic (Database migrations)
   - Pydantic (Data validation)
+  - Passlib (Password hashing)
 
 - **Frontend**:
   - HTML5
@@ -88,8 +90,9 @@ Request body:
 ```json
 {
   "target_url": "https://example.com",
-  "custom_code": "optional-alias",  // optional
-  "expires_at": "2024-12-31T23:59:59Z"  // optional
+  "custom_code": "optional-alias",     // optional
+  "expires_at": "2024-12-31T23:59:59Z", // optional
+  "password": "secret123"              // optional
 }
 ```
 
@@ -98,11 +101,37 @@ Response:
 {
   "target_url": "https://example.com",
   "short_code": "abc123",
-  "clicks": 0,
   "created_at": "2024-01-12T00:00:00Z",
-  "is_active": true
+  "is_active": true,
+  "is_protected": true
 }
 ```
 
 ### GET /api/{short_code}
-Redirects to the target URL
+Redirects to the target URL or displays password form if URL is protected
+
+### POST /api/{short_code}/verify
+Verifies password for protected URLs
+
+Request body (form data):
+```
+password: "your-password"
+```
+
+Response:
+- If password is correct: Redirects to target URL
+- If password is incorrect: Returns to password form with error message
+
+## Security Features
+
+### Password Protection
+- URLs can be optionally protected with a password
+- Passwords are securely hashed using bcrypt
+- Protected URLs show a password entry form before redirecting
+- Failed password attempts are tracked in the logs
+
+### URL Validation
+- All URLs are validated before shortening
+- Custom codes are sanitized to prevent injection attacks
+- Expired URLs are automatically deactivated
+- Click tracking provides usage analytics
