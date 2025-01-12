@@ -1,16 +1,19 @@
-from fastapi import APIRouter, HTTPException, Depends, Request
+from fastapi import APIRouter, HTTPException, Depends, Request, Form
 from ..database import get_db
 from .. import schemas
 import validators
 from ..services.shortener import URLShortener
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, HTMLResponse
 from typing import Annotated
+from fastapi.templating import Jinja2Templates
 
 
 router = APIRouter(
      prefix="/api",
      tags = ['API']
 )
+
+templates = Jinja2Templates(directory="templates")
 
 async def get_shortener(db=Depends(get_db)) -> URLShortener:
     return URLShortener(db)
@@ -29,9 +32,34 @@ async def create_short_url(url_request: schemas.URLCreate, shortener: Annotated[
     
     return await shortener.create_url(url_request)
 
-@router.get("/{short_code}")
+@router.get("/{short_code}",response_class=HTMLResponse)
 async def redirect_to_url(request: Request,short_code: str,shortener: Annotated[URLShortener, Depends(get_shortener)]):
     url_data = await shortener.get_url_by_code(short_code)
     await shortener.check_url_validity(url_data)
+    
+    
+    if url_data.password_hash:
+        return templates.TemplateResponse(
+            "password.html",
+            {"request": request, "short_code": short_code}
+        )
+        
+    return RedirectResponse(url=url_data.target_url)
+
+@router.post("/{short_code}/verify")
+async def verify_password(short_code: str,shortener: Annotated[URLShortener, Depends(get_shortener)],password: str = Form(...)):
+    url_data = await shortener.get_url_by_code(short_code)
+    await shortener.check_url_validity(url_data)
+    
+    if not url_data.verify_password(password):
+        return templates.TemplateResponse(
+            "password.html",
+            {
+                "request": Request,
+                "short_code": short_code,
+                "error": "Invalid password"
+            },
+            status_code=401
+        )
     
     return RedirectResponse(url=url_data.target_url)
