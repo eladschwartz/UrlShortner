@@ -1,36 +1,68 @@
 # URL Shortener
 
-A modern, fast, and simple URL shortener built with FastAPI and SQLAlchemy.
+A modern, secure, and feature-rich URL shortener built with FastAPI and SQLAlchemy.
 
 ## Features
 
-- ✨ Modern and responsive UI
+- ✨ Modern and responsive UI built with Bootstrap 5
 - 🚀 Fast asynchronous backend with FastAPI
-- 🔒 URL validation and sanitization
-- 🔑 Password protection for URLs
+- 🔒 Complete authentication system with JWT tokens
+- 👤 User dashboard for managing URLs
+- 🔑 Optional password protection for URLs
 - 📝 Custom URL aliases support
-- 🕒 Optional URL expiration
-- 📊 Click tracking
-- 🎨 Bootstrap 5 for styling
+- 🕒 URL expiration support
+- 📊 Click tracking and analytics
 - 🔄 Real-time URL validation
 - 📋 One-click copy functionality
+- 🎨 Modern glassmorphism design
+- 🛡️ Rate limiting and security features
 
 ## Tech Stack
 
-- **Backend**:
-  - FastAPI (ASGI web framework)
-  - SQLAlchemy (Async ORM)
-  - PostgreSQL (Database)
-  - Alembic (Database migrations)
-  - Pydantic (Data validation)
-  - Passlib (Password hashing)
+### Backend
+- **FastAPI**: Modern, fast web framework for building APIs with Python
+- **SQLAlchemy**: Async ORM for database operations
+- **PostgreSQL**: Primary database
+- **Alembic**: Database migration tool
+- **Pydantic**: Data validation and settings management
+- **Passlib**: Password hashing with bcrypt
+- **Python-Jose**: JWT token handling
+- **SlowAPI**: Rate limiting
 
-- **Frontend**:
-  - HTML5
-  - CSS3
-  - JavaScript (ES6+)
-  - Bootstrap 5
-  - Font Awesome icons
+### Frontend
+- **HTML5/CSS3**: Modern web standards
+- **JavaScript (ES6+)**: Clean, modern JavaScript
+- **Bootstrap 5**: Responsive design framework
+- **Font Awesome**: Icon library
+
+## Core Features
+
+### User Management
+- User registration and authentication
+- JWT token-based session management
+- Secure password hashing with bcrypt
+- Protected routes and user-specific content
+
+### URL Management
+- Create shortened URLs with optional features:
+  - Custom aliases
+  - Password protection
+  - Expiration dates
+- User dashboard for managing URLs:
+  - View all created URLs
+  - Enable/disable URLs
+  - Add/remove password protection
+  - Delete URLs
+- Copy shortened URLs with one click
+
+### Security Features
+- Password protection for URLs
+- Rate limiting for API endpoints
+- CORS protection
+- HTTPS redirection in production
+- SQL injection protection
+- XSS protection
+- Secure cookie handling
 
 ## Installation
 
@@ -51,7 +83,7 @@ A modern, fast, and simple URL shortener built with FastAPI and SQLAlchemy.
    pip install -r requirements.txt
    ```
 
-4. Create a `.env` file in the root directory with the following variables:
+4. Create a `.env` file in the root directory:
    ```env
    ENVIRONMENT=development
    DATABASE_HOSTNAME=localhost
@@ -61,6 +93,7 @@ A modern, fast, and simple URL shortener built with FastAPI and SQLAlchemy.
    DATABASE_USERNAME=postgres
    SECRET_KEY=your_secret_key
    ALGORITHM=HS256
+   ACCESS_TOKEN_EXPIRE_MINUTES=180
    ORIGINS_PROD=https://your-domain.com
    ```
 
@@ -83,55 +116,42 @@ A modern, fast, and simple URL shortener built with FastAPI and SQLAlchemy.
 
 ## API Endpoints
 
-### POST /api/shorten
-Creates a shortened URL
+### Authentication
+- `POST /auth/register`: Register new user
+- `POST /auth/login`: Login user
+- `GET /auth/logout`: Logout user
 
-Request body:
-```json
-{
-  "target_url": "https://example.com",
-  "custom_code": "optional-alias",     // optional
-  "expires_at": "2024-12-31T23:59:59Z", // optional
-  "password": "secret123"              // optional
-}
-```
+### URL Management
+- `POST /api/shorten`: Create shortened URL
+  ```json
+  {
+    "target_url": "https://example.com",
+    "custom_code": "optional-alias",
+    "expires_at": "2024-12-31T23:59:59Z",
+    "password": "optional-password"
+  }
+  ```
 
-Response:
-```json
-{
-  "target_url": "https://example.com",
-  "short_code": "abc123",
-  "created_at": "2024-01-12T00:00:00Z",
-  "is_active": true,
-  "is_protected": true
-}
-```
+- `GET /api/{short_code}`: Redirect to target URL
+- `PUT /api/urls/{url_id}/toggle`: Enable/disable URL
+- `PUT /api/urls/{url_id}/password`: Update URL password
+- `DELETE /api/urls/{url_id}`: Delete URL
 
-### GET /api/{short_code}
-Redirects to the target URL or displays password form if URL is protected
+### Dashboard
+- `GET /dashboard`: User dashboard for URL management
 
-### POST /api/{short_code}/verify
-Verifies password for protected URLs
-
-Request body (form data):
-```
-password: "your-password"
-```
-
-Response:
-- If password is correct: Redirects to target URL
-- If password is incorrect: Returns to password form with error message
-
-## Security Features
+## Security Considerations
 
 ### Password Protection
-- URLs can be optionally protected with a password
-- Passwords are securely hashed using bcrypt
+- URLs can be optionally protected with passwords
+- Passwords are hashed using bcrypt
 - Protected URLs show a password entry form before redirecting
-- Failed password attempts are tracked in the logs
+- Failed password attempts are tracked
 
 ### URL Validation
 - All URLs are validated before shortening
 - Custom codes are sanitized to prevent injection attacks
 - Expired URLs are automatically deactivated
-- Click tracking provides usage analytics
+- Rate limiting prevents abuse
+
+
