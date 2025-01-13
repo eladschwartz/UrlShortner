@@ -1,6 +1,7 @@
-from . import home, api
+from . import home, api, auth
 
 ROUTERS = [
     home.router,
     api.router,
+    auth.router
 ]

@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     database_password: str
     database_name: str
     database_username: str
+    access_token_expire_minutes: int
     secret_key: str
     algorithm: str
     origins_dev: str = "http://127.0.0.1:8000,'http://localhost:8000"

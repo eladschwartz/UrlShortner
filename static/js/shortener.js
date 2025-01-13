@@ -75,6 +75,15 @@ class URLShortener {
             this.shortUrlInput.value = shortUrl;
             this.resultCard.style.display = 'block';
             this.resultCard.scrollIntoView({ behavior: 'smooth' });
+
+            // Clear the form fields
+            this.urlInput.value = '';
+            document.getElementById('customCodeInput').value = '';
+            if (this.passwordInput) {
+                this.passwordInput.value = '';
+                // Hide the password note when clearing the form
+                document.getElementById('passwordNote').classList.add('d-none');
+            }
         } catch (error) {
             alert(error.message || 'Failed to shorten URL. Please try again.');
         }
