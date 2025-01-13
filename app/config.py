@@ -12,7 +12,9 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int
     secret_key: str
     algorithm: str
-    origins_dev: str = "http://127.0.0.1:8000,'http://localhost:8000"
+    allowed_dev: str = "localhost,127.0.0.1"
+    allowed_prod: str
+    origins_dev: str = "http://127.0.0.1:8000, http://localhost:8000"
     origins_prod: str
     
     class Config:
@@ -24,6 +26,13 @@ class Settings(BaseSettings):
             return [origin.strip() for origin in self.origins_dev.split(",")]
         else:
             return [origin.strip() for origin in self.origins_prod.split(",")]
+        
+    @property
+    def allowed_hosts(self) -> list[str]:
+        if self.ENVIRONMENT == Environment.DEVELOPMENT:
+            return [origin.strip() for origin in self.allowed_dev.split(",")]
+        else:
+            return [origin.strip() for origin in self.allowed_prod.split(",")]
         
     
     
