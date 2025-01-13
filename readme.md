@@ -2,6 +2,7 @@
 
 A modern, secure, and feature-rich URL shortener built with FastAPI and SQLAlchemy.
 
+You can see an exmaple of this working at: https://urlshortner-8f0bb70ad7fb.herokuapp.com/
 ## Features
 
 - ✨ Modern and responsive UI built with Bootstrap 5
